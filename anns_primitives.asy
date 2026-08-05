@@ -41,8 +41,10 @@ void drawActivationNode(picture pic, pair pos, real r, Theme theme) {
 // Connection between two circular nodes, trimmed to the node boundaries so
 // arrowheads land on the circle edge rather than its center. Set accent=true
 // to draw it in the theme's accent color (e.g. a bias connection).
+// labelSide flips which side of the line the label sits on (1 or -1),
+// for cases where the automatic perpendicular placement lands awkwardly.
 void drawEdge(picture pic, pair fromPt, real rFrom, pair toPt, real rTo, Theme theme,
-              string label="", bool accent=false) {
+              string label="", bool accent=false, real labelSide=1) {
     pair d = unit(toPt - fromPt);
     pair p1 = fromPt + rFrom*d;
     pair p2 = toPt - rTo*d;
@@ -51,7 +53,7 @@ void drawEdge(picture pic, pair fromPt, real rFrom, pair toPt, real rTo, Theme t
     if (label != "") {
         pair mid = (p1 + p2)/2;
         pair perp = rotate(90)*d;
-        label(pic, label, mid + 0.18*perp, theme.text);
+        label(pic, label, mid + labelSide*0.18*perp, theme.text);
     }
 }
 
