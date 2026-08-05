@@ -35,11 +35,11 @@ void drawPerceptron(picture pic, Theme theme, int nInputs=3) {
     drawTitle(pic, "Single Perceptron", (sumPos.x, biasPos.y + spacing), theme);
 }
 
-void renderPerceptron(string prefix, string themeName, int nInputs=3) {
+void renderPerceptron(string themeName, int nInputs=3) {
     Theme theme = getTheme(themeName);
     picture pic;
     drawPerceptron(pic, theme, nInputs);
-    renderTheme(pic, prefix, theme);
+    renderTheme(pic, theme);
 }
 
-renderPerceptron("anns_perceptron", "dark");
+renderPerceptron("dark");

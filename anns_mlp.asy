@@ -45,12 +45,12 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
     drawTitle(pic, "Multi-Layer Network", ((nLayers - 1)*xSpacing/2, titleY), theme);
 }
 
-void renderMLP(string prefix, string themeName, int[] layerSizes) {
+void renderMLP(string themeName, int[] layerSizes) {
     Theme theme = getTheme(themeName);
     picture pic;
     drawMLP(pic, theme, layerSizes);
-    renderTheme(pic, prefix, theme);
+    renderTheme(pic, theme);
 }
 
 int[] layerSizes = {4,5,5,3};
-renderMLP("anns_mlp", "dark", layerSizes);
+renderMLP("dark", layerSizes);

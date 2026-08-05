@@ -91,7 +91,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     drawTitle(pic, "Convolutional Neural Network", (fcStartX/2, titleY), theme);
 }
 
-void renderCNN(string prefix, string themeName) {
+void renderCNN(string themeName) {
     Theme theme = getTheme(themeName);
     picture pic;
 
@@ -105,7 +105,7 @@ void renderCNN(string prefix, string themeName) {
     int[] fcSizes = {8, 10};
 
     drawCNN(pic, theme, blocks, fcSizes);
-    renderTheme(pic, prefix, theme);
+    renderTheme(pic, theme);
 }
 
-renderCNN("anns_cnn", "dark");
+renderCNN("dark");
