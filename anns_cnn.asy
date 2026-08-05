@@ -102,10 +102,12 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     // The first convolution acts on real pixels, so it's
                     // worth spelling out concretely what "6 kernels of
                     // 5x5" means: two example kernels, shaded the same
-                    // way as the input pixels, stacked vertically with a
-                    // "..." below them -- the same vertical-dots-below-two-
-                    // items convention used for eliding nodes elsewhere --
-                    // showing these are only 2 of the 6.
+                    // way as the input pixels, stacked vertically as
+                    // kernel, ..., kernel -- echoing the x1, x2, ..., xn
+                    // convention used for eliding nodes elsewhere, but
+                    // with the "..." between the two shown kernels rather
+                    // than after them, reading as first-kernel-through-
+                    // last-kernel with the middle ones elided.
                     int kN = 5;
                     real kCell = 0.12;
                     real kWidth = kN*kCell;
@@ -130,8 +132,8 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     }
                     real vspacing = kWidth + 0.3;
                     pair gapCenter = ((rightX[i-1] + leftX[i])/2, 0);
-                    pair centerTop = gapCenter + (0, vspacing/2);
-                    pair centerBot = gapCenter - (0, vspacing/2);
+                    pair centerTop = gapCenter + (0, vspacing);
+                    pair centerBot = gapCenter - (0, vspacing);
                     drawGrid(pic, centerTop - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
                              new string[][], false, kernelCross);
                     drawGrid(pic, centerBot - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
@@ -139,7 +141,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     // Nudged up slightly: \vdots renders with its visual
                     // center below its LaTeX anchor point (see the same
                     // fix in drawDottedLayer, anns_primitives.asy).
-                    label(pic, "$\vdots$", centerBot - (0, kWidth/2 + 0.32 - 0.1), theme.text);
+                    label(pic, "$\vdots$", gapCenter + (0, 0.1), theme.text);
                 } else {
                     drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
                 }
