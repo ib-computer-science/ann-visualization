@@ -69,13 +69,38 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     pair[] basePos = new pair[blocks.length];
     for (int i = 0; i < blocks.length; ++i) basePos[i] = (leftX[i], -blocks[i].size/2);
 
+    int pixN = 7;
     for (int i = 0; i < blocks.length; ++i) {
         CNNBlock b = blocks[i];
-        drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);
+        if (i == 0) {
+            // The input is real pixel data, not an abstract feature-map
+            // stack, so it's drawn as an actual (stylized) pixel grid
+            // rather than a plain square.
+            real pixCell = b.size/pixN;
+            drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme);
+            label(pic, b.caption, basePos[i] + (b.size/2, -0.4), theme.text);
+        } else {
+            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);
+        }
         if (i > 0) {
             drawFlowArrow(pic, (rightX[i-1], flowY), (leftX[i], flowY), theme, b.opLabel);
             if (find(b.opLabel, "conv") >= 0) {
-                drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
+                if (i == 1) {
+                    // The first convolution acts on real pixels, so it's
+                    // worth spelling out concretely what "6 kernels of
+                    // 5x5" means: two example kernels, drawn the same way
+                    // as the input, sitting in the gap between the two.
+                    int kN = 5;
+                    real kCell = 0.13;
+                    real kWidth = kN*kCell;
+                    pair gapCenter = ((rightX[i-1] + leftX[i])/2, 0);
+                    pair centerA = gapCenter - (kWidth/2 + 0.15, 0);
+                    pair centerB = gapCenter + (kWidth/2 + 0.15, 0);
+                    drawGrid(pic, centerA - (kWidth/2, kWidth/2), kCell, kN, kN, theme);
+                    drawGrid(pic, centerB - (kWidth/2, kWidth/2), kCell, kN, kN, theme);
+                } else {
+                    drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
+                }
             }
         }
     }
