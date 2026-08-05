@@ -91,9 +91,9 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
         }
         int l = colLayerIdx[c];
         if (l == 0) {
-            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "x");
+            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "x", "n");
         } else if (l == nLayers - 1) {
-            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "y");
+            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "y", "m");
         } else {
             drawLayer(pic, positions[c], r, theme);
         }

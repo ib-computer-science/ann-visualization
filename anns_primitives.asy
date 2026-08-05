@@ -126,9 +126,14 @@ pair[] dottedLayerPositions(int n, real x, real spacing) {
 }
 
 // Draws the nodes for a dottedLayerPositions() layout, labeled
-// labelPrefix_1, labelPrefix_2, ..., labelPrefix_n (using the literal
-// index when n<=3, since then every node is shown).
-void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string labelPrefix) {
+// labelPrefix_1, labelPrefix_2, ..., labelPrefix_{countSymbol} (using the
+// literal index when n<=3, since then every node is shown). countSymbol
+// names the layer's node count (e.g. "n" for one layer, "m" for another),
+// so two differently-sized dotted layers in the same diagram don't both
+// read as ending at "_n" -- which would visually imply equal sizes even
+// when they're not.
+void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string labelPrefix,
+                      string countSymbol="n") {
     if (n <= 3) {
         string[] labels = new string[n];
         for (int i = 0; i < n; ++i) labels[i] = "$" + labelPrefix + "_{" + string(i+1) + "}$";
@@ -142,7 +147,7 @@ void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string
     // anchor up to compensate and land the dots symmetrically in the gap.
     pair dotsPos = (pos[1].x, (pos[1].y + pos[2].y)/2 + 0.1);
     label(pic, "$\vdots$", dotsPos, theme.text);
-    drawNode(pic, pos[2], r, theme, "$" + labelPrefix + "_n$");
+    drawNode(pic, pos[2], r, theme, "$" + labelPrefix + "_" + countSymbol + "$");
 }
 
 // ------------------------------------------------------- CNN box/volume --
