@@ -53,5 +53,5 @@ void renderMLP(string prefix, string themeName, int[] layerSizes) {
 }
 
 int[] layerSizes = {4,5,5,3};
-renderMLP("output/anns_mlp_light", "light", layerSizes);
-renderMLP("output/anns_mlp_dark", "dark", layerSizes);
+renderMLP("anns_mlp_light", "light", layerSizes);
+renderMLP("anns_mlp_dark", "dark", layerSizes);

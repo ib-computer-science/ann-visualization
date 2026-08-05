@@ -42,5 +42,5 @@ void renderPerceptron(string prefix, string themeName, int nInputs=3) {
     renderTheme(pic, prefix, theme);
 }
 
-renderPerceptron("output/anns_perceptron_light", "light");
-renderPerceptron("output/anns_perceptron_dark", "dark");
+renderPerceptron("anns_perceptron_light", "light");
+renderPerceptron("anns_perceptron_dark", "dark");
