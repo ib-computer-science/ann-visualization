@@ -36,9 +36,6 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
         for (int c = 0; c < nLayers; ++c) colLayerIdx[c] = c;
     }
 
-    real maxCount = 0;
-    for (int l = 0; l < nLayers; ++l) if (layerSizes[l] > maxCount) maxCount = layerSizes[l];
-
     // Input and output columns also use ellipsis notation when they have
     // more than 3 neurons, the same convention as the perceptron diagram.
     pair[][] positions = new pair[nCols][];
@@ -100,18 +97,6 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
         } else {
             drawLayer(pic, positions[c], r, theme);
         }
-    }
-
-    real captionY = -((maxCount - 1)*ySpacing)/2 - 1.0;
-    for (int c = 0; c < nCols; ++c) {
-        if (colLayerIdx[c] < 0) continue;
-        int l = colLayerIdx[c];
-        string cap;
-        if (l == 0) cap = "Input";
-        else if (l == nLayers - 1) cap = "Output";
-        else if (useDots && l == nLayers - 2) cap = "Hidden L";
-        else cap = "Hidden " + string(l);
-        label(pic, cap, (c*xSpacing, captionY), theme.text);
     }
 }
 
