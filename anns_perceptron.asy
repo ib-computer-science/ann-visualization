@@ -52,11 +52,11 @@ void drawPerceptron(picture pic, Theme theme, int nInputs=5) {
         }
     }
 
-    drawAccentNode(pic, biasPos, r, theme, "$+1$");
+    drawNode(pic, biasPos, r, theme, "$b$");
     drawSumNode(pic, sumPos, r, theme);
     drawActivationNode(pic, actPos, r, theme);
 
-    drawEdge(pic, biasPos, r, sumPos, r, theme, "$b$", true);
+    drawEdge(pic, biasPos, r, sumPos, r, theme);
     drawEdge(pic, sumPos, r, actPos, r, theme);
     drawEdge(pic, actPos, r, outputEnd, 0, theme);
     label(pic, "$y$", outputEnd + (0.4,0), theme.text);
