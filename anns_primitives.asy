@@ -150,6 +150,65 @@ void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string
     drawNode(pic, pos[2], r, theme, "$" + labelPrefix + "_" + countSymbol + "$");
 }
 
+// ---------------------------------------------------------------- grids ---
+// A grid of unit cells (a small matrix), used to show the mechanics of a
+// convolution: row 0 is the top row, matching how matrices are normally
+// read/written, and basePos is the grid's overall lower-left corner.
+
+pair gridCellCorner(pair basePos, real cellSize, int rows, int row, int col) {
+    return basePos + (col*cellSize, (rows - 1 - row)*cellSize);
+}
+
+pair gridCellCenter(pair basePos, real cellSize, int rows, int row, int col) {
+    return gridCellCorner(basePos, cellSize, rows, row, col) + (cellSize/2, cellSize/2);
+}
+
+// Draws every cell's outline; labels[row][col], if present, is drawn
+// centered in that cell (labels may be a ragged/partial array, or omitted).
+// dottedLines draws a faint dotted grid instead of solid outlines, so a
+// solid-outlined highlight (see highlightGridRegion/highlightGridCell)
+// stands out from the background grid using line style alone -- these
+// diagrams are black/white only, so this stands in for color emphasis.
+void drawGrid(picture pic, pair basePos, real cellSize, int rows, int cols, Theme theme,
+              string[][] labels=new string[][], bool dottedLines=false) {
+    pen linePen = dottedLines ? theme.stroke + dotted : theme.stroke;
+    for (int rIdx = 0; rIdx < rows; ++rIdx) {
+        for (int cIdx = 0; cIdx < cols; ++cIdx) {
+            pair corner = gridCellCorner(basePos, cellSize, rows, rIdx, cIdx);
+            draw(pic, box(corner, corner + (cellSize, cellSize)), linePen);
+            if (rIdx < labels.length && cIdx < labels[rIdx].length && labels[rIdx][cIdx] != "") {
+                label(pic, labels[rIdx][cIdx], corner + (cellSize/2, cellSize/2), theme.text);
+            }
+        }
+    }
+}
+
+// Outlines the regionRows x regionCols block of cells whose top-left
+// corner is (row, col) -- e.g. where a kernel currently sits on an input
+// grid.
+void highlightGridRegion(picture pic, pair basePos, real cellSize, int rows, int row, int col,
+                          int regionRows, int regionCols, pen p) {
+    pair corner = gridCellCorner(basePos, cellSize, rows, row + regionRows - 1, col);
+    draw(pic, box(corner, corner + (regionCols*cellSize, regionRows*cellSize)), p);
+}
+
+// Fills a single cell, e.g. to mark the one output value a kernel position
+// produced.
+void highlightGridCell(picture pic, pair basePos, real cellSize, int rows, int row, int col,
+                        pen p) {
+    pair corner = gridCellCorner(basePos, cellSize, rows, row, col);
+    filldraw(pic, box(corner, corner + (cellSize, cellSize)), p, p);
+}
+
+// Center point of the regionRows x regionCols block of cells whose
+// top-left corner is (row, col) -- matches highlightGridRegion, so an
+// arrow can be drawn from/to the same block it outlines.
+pair gridRegionCenter(pair basePos, real cellSize, int rows, int row, int col,
+                       int regionRows, int regionCols) {
+    pair corner = gridCellCorner(basePos, cellSize, rows, row + regionRows - 1, col);
+    return corner + (regionCols*cellSize/2, regionRows*cellSize/2);
+}
+
 // ------------------------------------------------------- CNN box/volume --
 
 // Draws a stack of `depth` overlapping rectangles (a common shorthand for a

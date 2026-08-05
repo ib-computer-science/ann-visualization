@@ -22,6 +22,29 @@ CNNBlock cnnBlock(int depth, real size, string caption, string opLabel="") {
     return b;
 }
 
+// Visual hint for what a convolution actually does: a small dashed
+// "kernel window" on the input block's front face, connected by an arrow
+// to a single highlighted cell on the output block's front face -- one
+// small patch of input producing one value in the output feature map.
+void drawConvHint(picture pic, pair inBase, real inSize, pair outBase, real outSize,
+                   Theme theme, real kernelFrac=0.32) {
+    real kSize = inSize*kernelFrac;
+    pair kCorner = inBase + (0, inSize - kSize);
+    // A dashed outline breaks up unreadably at this small a scale, so the
+    // kernel window uses a heavier solid outline instead -- these diagrams
+    // are black/white only, so weight (not color) is what sets it apart
+    // from the block's own outline.
+    draw(pic, box(kCorner, kCorner + (kSize, kSize)), theme.stroke + linewidth(1.6));
+
+    real cellSize = outSize*0.16;
+    pair oCorner = outBase + (0, outSize - cellSize);
+    filldraw(pic, box(oCorner, oCorner + (cellSize, cellSize)), theme.stroke, theme.stroke);
+
+    pair kCenter = kCorner + (kSize/2, kSize/2);
+    pair oCenter = oCorner + (cellSize/2, cellSize/2);
+    draw(pic, kCenter--oCenter, theme.stroke + linewidth(0.8), Arrow(4));
+}
+
 void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
              real xStep=3.6, real skew=0.10) {
     // --- convolutional / pooling stacks ---
@@ -43,12 +66,17 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     real lastBlockX = x;
     real flowY = blockHalfExtent + 0.6;
 
+    pair[] basePos = new pair[blocks.length];
+    for (int i = 0; i < blocks.length; ++i) basePos[i] = (leftX[i], -blocks[i].size/2);
+
     for (int i = 0; i < blocks.length; ++i) {
         CNNBlock b = blocks[i];
-        pair basePos = (leftX[i], -b.size/2);
-        drawFeatureStack(pic, basePos, b.size, b.size, b.depth, theme, b.caption, skew);
+        drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);
         if (i > 0) {
             drawFlowArrow(pic, (rightX[i-1], flowY), (leftX[i], flowY), theme, b.opLabel);
+            if (find(b.opLabel, "conv") >= 0) {
+                drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
+            }
         }
     }
 
