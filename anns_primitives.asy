@@ -117,7 +117,10 @@ void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string
     }
     drawNode(pic, pos[0], r, theme, "$" + labelPrefix + "_1$");
     drawNode(pic, pos[1], r, theme, "$" + labelPrefix + "_2$");
-    pair dotsPos = (pos[1].x, (pos[1].y + pos[2].y)/2);
+    // \vdots renders with its visual center noticeably below its LaTeX
+    // anchor point (measured ~0.1 of a unitsize(1cm) unit), so nudge the
+    // anchor up to compensate and land the dots symmetrically in the gap.
+    pair dotsPos = (pos[1].x, (pos[1].y + pos[2].y)/2 + 0.1);
     label(pic, "$\vdots$", dotsPos, theme.text);
     drawNode(pic, pos[2], r, theme, "$" + labelPrefix + "_n$");
 }
