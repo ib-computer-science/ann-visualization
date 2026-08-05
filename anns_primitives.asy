@@ -209,6 +209,20 @@ pair gridRegionCenter(pair basePos, real cellSize, int rows, int row, int col,
     return corner + (regionCols*cellSize/2, regionRows*cellSize/2);
 }
 
+// Top-edge midpoint of that same region -- an anchor for arrows that
+// should leave from the top of a highlighted block rather than its center.
+pair gridRegionTopCenter(pair basePos, real cellSize, int rows, int row, int col,
+                          int regionRows, int regionCols) {
+    pair corner = gridCellCorner(basePos, cellSize, rows, row, col);
+    return corner + (regionCols*cellSize/2, cellSize);
+}
+
+// Top-edge midpoint of a single cell.
+pair gridCellTopCenter(pair basePos, real cellSize, int rows, int row, int col) {
+    pair corner = gridCellCorner(basePos, cellSize, rows, row, col);
+    return corner + (cellSize/2, cellSize);
+}
+
 // ------------------------------------------------------- CNN box/volume --
 
 // Draws a stack of `depth` overlapping rectangles (a common shorthand for a

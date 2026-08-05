@@ -44,25 +44,23 @@ void drawConvolution(picture pic, Theme theme, int inputRows=6, int inputCols=6,
 
     pair winA = gridRegionCenter(inputBase, cellSize, inputRows, 0, 0, k, k);
     pair winB = gridRegionCenter(inputBase, cellSize, inputRows, 0, colB, k, k);
-    pair cellA = gridCellCenter(outputBase, cellSize, outputRows, 0, 0);
-    pair cellB = gridCellCenter(outputBase, cellSize, outputRows, 0, outputCols-1);
 
-    // Arrows start at the input grid's right edge (at each window's own
-    // height) rather than from inside the grid, so they don't cut across
-    // unrelated cells on their way to the output. They arc rather than
-    // running straight, so the two (which would otherwise be collinear,
-    // since both windows sit in the same row) read as distinct paths.
-    real edgeX = inputBase.x + inputCols*cellSize;
-    pair edgeA = (edgeX, winA.y);
-    pair edgeB = (edgeX, winB.y);
-    pair ctrlA = (edgeA + cellA)/2 + (0, 0.5);
-    pair ctrlB = (edgeB + cellB)/2 + (0, 0.25);
-    draw(pic, edgeA..ctrlA..cellA, theme.stroke + linewidth(1.2), Arrow(6));
-    draw(pic, edgeB..ctrlB..cellB, theme.stroke + linewidth(0.6), Arrow(4));
+    // Arcs run from the top of each kernel window to the top of the output
+    // cell it produces, rather than side-to-side, and bow upward so the
+    // two (which would otherwise be collinear, since both windows sit in
+    // the same input row) read as distinct paths.
+    pair winATop = gridRegionTopCenter(inputBase, cellSize, inputRows, 0, 0, k, k);
+    pair winBTop = gridRegionTopCenter(inputBase, cellSize, inputRows, 0, colB, k, k);
+    pair cellATop = gridCellTopCenter(outputBase, cellSize, outputRows, 0, 0);
+    pair cellBTop = gridCellTopCenter(outputBase, cellSize, outputRows, 0, outputCols-1);
+    pair ctrlA = (winATop + cellATop)/2 + (0, 0.35);
+    pair ctrlB = (winBTop + cellBTop)/2 + (0, 0.18);
+    draw(pic, winATop..ctrlA..cellATop, theme.stroke + linewidth(1.2), Arrow(6));
+    draw(pic, winBTop..ctrlB..cellBTop, theme.stroke + linewidth(0.6), Arrow(4));
 
     // An arrow above the input grid showing the kernel sliding from its
     // first position all the way to its second.
-    real slideY = inputBase.y + inputRows*cellSize + 0.4;
+    real slideY = inputBase.y + inputRows*cellSize + 0.9;
     draw(pic, (winA.x, slideY)--(winB.x, slideY), theme.edge, Arrow(6));
     label(pic, "slide", ((winA.x + winB.x)/2, slideY + 0.32), theme.text);
 }
