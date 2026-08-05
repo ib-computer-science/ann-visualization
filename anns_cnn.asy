@@ -108,5 +108,4 @@ void renderCNN(string prefix, string themeName) {
     renderTheme(pic, prefix, theme);
 }
 
-renderCNN("anns_cnn_light", "light");
-renderCNN("anns_cnn_dark", "dark");
+renderCNN("anns_cnn", "dark");
