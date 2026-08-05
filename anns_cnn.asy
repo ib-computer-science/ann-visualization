@@ -74,10 +74,18 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
         CNNBlock b = blocks[i];
         if (i == 0) {
             // The input is real pixel data, not an abstract feature-map
-            // stack, so it's drawn as an actual (stylized) pixel grid
-            // rather than a plain square.
+            // stack, so it's drawn as an actual (stylized) pixel grid with
+            // shaded pixel values -- a simple left-to-right gradient, so
+            // there's a visible edge for the kernels shown just after it
+            // to plausibly be detecting.
             real pixCell = b.size/pixN;
-            drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme);
+            real[][] pixelValues = new real[pixN][pixN];
+            for (int r = 0; r < pixN; ++r) {
+                for (int c = 0; c < pixN; ++c) {
+                    pixelValues[r][c] = 0.15 + 0.7*(1 - c/(pixN-1.0));
+                }
+            }
+            drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme, new string[][], false, pixelValues);
             label(pic, b.caption, basePos[i] + (b.size/2, -0.4), theme.text);
         } else {
             drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);

@@ -163,19 +163,36 @@ pair gridCellCenter(pair basePos, real cellSize, int rows, int row, int col) {
     return gridCellCorner(basePos, cellSize, rows, row, col) + (cellSize/2, cellSize/2);
 }
 
+// A pen for a grayscale pixel value (0 = background/blank, 1 = fully
+// theme.stroke-colored ink), interpolated between the theme's own
+// background and stroke pens so it inverts correctly between light and
+// dark themes instead of hardcoding literal gray levels.
+pen grayscalePen(Theme theme, real value) {
+    real v = min(max(value, 0), 1);
+    return (1 - v)*theme.background + v*theme.stroke;
+}
+
 // Draws every cell's outline; labels[row][col], if present, is drawn
 // centered in that cell (labels may be a ragged/partial array, or omitted).
+// values[row][col], if present, shades that cell as a grayscale pixel (see
+// grayscalePen) before the outline is drawn on top.
 // dottedLines draws a faint dotted grid instead of solid outlines, so a
 // solid-outlined highlight (see highlightGridRegion/highlightGridCell)
 // stands out from the background grid using line style alone -- these
 // diagrams are black/white only, so this stands in for color emphasis.
 void drawGrid(picture pic, pair basePos, real cellSize, int rows, int cols, Theme theme,
-              string[][] labels=new string[][], bool dottedLines=false) {
+              string[][] labels=new string[][], bool dottedLines=false,
+              real[][] values=new real[][]) {
     pen linePen = dottedLines ? theme.stroke + dotted : theme.stroke;
     for (int rIdx = 0; rIdx < rows; ++rIdx) {
         for (int cIdx = 0; cIdx < cols; ++cIdx) {
             pair corner = gridCellCorner(basePos, cellSize, rows, rIdx, cIdx);
-            draw(pic, box(corner, corner + (cellSize, cellSize)), linePen);
+            path cellBox = box(corner, corner + (cellSize, cellSize));
+            if (rIdx < values.length && cIdx < values[rIdx].length) {
+                filldraw(pic, cellBox, grayscalePen(theme, values[rIdx][cIdx]), linePen);
+            } else {
+                draw(pic, cellBox, linePen);
+            }
             if (rIdx < labels.length && cIdx < labels[rIdx].length && labels[rIdx][cIdx] != "") {
                 label(pic, labels[rIdx][cIdx], corner + (cellSize/2, cellSize/2), theme.text);
             }
