@@ -96,7 +96,10 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
             drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);
         }
         if (i > 0) {
-            drawFlowArrow(pic, (rightX[i-1], flowY), (leftX[i], flowY), theme, b.opLabel);
+            // A wrapped (shortstack) label is two lines tall, so it needs
+            // more clearance above the arrow than a single-line one.
+            real labelOffset = (find(b.opLabel, "shortstack") >= 0) ? 0.5 : 0.28;
+            drawFlowArrow(pic, (rightX[i-1], flowY), (leftX[i], flowY), theme, b.opLabel, labelOffset);
             if (find(b.opLabel, "conv") >= 0) {
                 if (i == 1) {
                     // The first convolution acts on real pixels, so it's
@@ -191,7 +194,8 @@ void renderCNN(string themeName) {
 
     CNNBlock[] blocks = {
         cnnBlock(1,  1.8, "Input (28x28x1)"),
-        cnnBlock(6,  1.5, "Conv1 (24x24x6)",  "convolution with $n$ kernels"),
+        cnnBlock(6,  1.5, "\shortstack{$n$ 24x24\\feature maps}",
+                 "\shortstack{convolution with\\$n$ kernels}"),
         cnnBlock(6,  1.0, "Pool1 (12x12x6)",  "2x2 max pool"),
         cnnBlock(12, 0.8, "Conv2 (8x8x12)",   "5x5 conv"),
         cnnBlock(12, 0.5, "Pool2 (4x4x12)",   "2x2 max pool")
