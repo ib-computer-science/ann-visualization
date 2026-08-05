@@ -191,7 +191,7 @@ void renderCNN(string themeName) {
 
     CNNBlock[] blocks = {
         cnnBlock(1,  1.8, "Input (28x28x1)"),
-        cnnBlock(6,  1.5, "Conv1 (24x24x6)",  "5x5 conv"),
+        cnnBlock(6,  1.5, "Conv1 (24x24x6)",  "convolution with $n$ kernels"),
         cnnBlock(6,  1.0, "Pool1 (12x12x6)",  "2x2 max pool"),
         cnnBlock(12, 0.8, "Conv2 (8x8x12)",   "5x5 conv"),
         cnnBlock(12, 0.5, "Pool2 (4x4x12)",   "2x2 max pool")
