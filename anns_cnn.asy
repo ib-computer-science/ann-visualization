@@ -46,7 +46,7 @@ void drawConvHint(picture pic, pair inBase, real inSize, pair outBase, real outS
 }
 
 void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
-             real xStep=3.6, real skew=0.10) {
+             real xStep=4.2, real skew=0.10) {
     // --- convolutional / pooling stacks ---
     // Operation arrows are routed along a common horizontal line above all
     // the blocks (flowY), independent of each block's own size, so their
@@ -101,16 +101,30 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                 if (i == 1) {
                     // The first convolution acts on real pixels, so it's
                     // worth spelling out concretely what "6 kernels of
-                    // 5x5" means: two example kernels, drawn the same way
-                    // as the input, sitting in the gap between the two.
+                    // 5x5" means: two example kernels, shaded the same
+                    // way as the input pixels, plus a "..." (the same
+                    // ellipsis convention used for eliding nodes/layers
+                    // elsewhere) showing these are only 2 of the 6.
                     int kN = 5;
-                    real kCell = 0.13;
+                    real kCell = 0.12;
                     real kWidth = kN*kCell;
+                    real ink = 0.85, mid = 0.5, blank = 0.05;
+                    real[][] kernelVert = new real[kN][kN];
+                    real[][] kernelHoriz = new real[kN][kN];
+                    for (int r = 0; r < kN; ++r) {
+                        for (int c = 0; c < kN; ++c) {
+                            kernelVert[r][c] = (c < 2) ? ink : (c == 2 ? mid : blank);
+                            kernelHoriz[r][c] = (r < 2) ? ink : (r == 2 ? mid : blank);
+                        }
+                    }
                     pair gapCenter = ((rightX[i-1] + leftX[i])/2, 0);
-                    pair centerA = gapCenter - (kWidth/2 + 0.15, 0);
-                    pair centerB = gapCenter + (kWidth/2 + 0.15, 0);
-                    drawGrid(pic, centerA - (kWidth/2, kWidth/2), kCell, kN, kN, theme);
-                    drawGrid(pic, centerB - (kWidth/2, kWidth/2), kCell, kN, kN, theme);
+                    pair centerA = gapCenter - (kWidth + 0.35, 0);
+                    pair centerB = gapCenter - (0, 0);
+                    drawGrid(pic, centerA - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
+                             new string[][], false, kernelVert);
+                    drawGrid(pic, centerB - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
+                             new string[][], false, kernelHoriz);
+                    label(pic, "$\cdots$", centerB + (kWidth/2 + 0.4, 0), theme.text);
                 } else {
                     drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
                 }
