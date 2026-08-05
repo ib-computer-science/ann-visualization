@@ -39,10 +39,16 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
     real maxCount = 0;
     for (int l = 0; l < nLayers; ++l) if (layerSizes[l] > maxCount) maxCount = layerSizes[l];
 
+    // Input and output columns also use ellipsis notation when they have
+    // more than 3 neurons, the same convention as the perceptron diagram.
     pair[][] positions = new pair[nCols][];
     for (int c = 0; c < nCols; ++c) {
-        if (colLayerIdx[c] >= 0) {
-            positions[c] = layerPositions(layerSizes[colLayerIdx[c]], c*xSpacing, ySpacing, 0);
+        if (colLayerIdx[c] < 0) continue;
+        int l = colLayerIdx[c];
+        if (l == 0 || l == nLayers - 1) {
+            positions[c] = dottedLayerPositions(layerSizes[l], c*xSpacing, ySpacing);
+        } else {
+            positions[c] = layerPositions(layerSizes[l], c*xSpacing, ySpacing, 0);
         }
     }
 
@@ -61,14 +67,13 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
             continue;
         }
         int l = colLayerIdx[c];
-        string[] labels = new string[layerSizes[l]];
-        for (int i = 0; i < layerSizes[l]; ++i) labels[i] = "";
         if (l == 0) {
-            for (int i = 0; i < layerSizes[l]; ++i) labels[i] = "$x_{" + string(i+1) + "}$";
+            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "x");
         } else if (l == nLayers - 1) {
-            for (int i = 0; i < layerSizes[l]; ++i) labels[i] = "$y_{" + string(i+1) + "}$";
+            drawDottedLayer(pic, positions[c], layerSizes[l], r, theme, "y");
+        } else {
+            drawLayer(pic, positions[c], r, theme);
         }
-        drawLayer(pic, positions[c], r, theme, labels);
     }
 
     real captionY = -((maxCount - 1)*ySpacing)/2 - 1.0;
@@ -91,5 +96,5 @@ void renderMLP(string themeName, int[] layerSizes) {
     renderTheme(pic, theme);
 }
 
-int[] layerSizes = {4,5,5,5,5,3};
+int[] layerSizes = {6,5,5,5,5,8};
 renderMLP("dark", layerSizes);

@@ -89,6 +89,39 @@ void connectLayers(picture pic, pair[] fromPos, real rFrom, pair[] toPos, real r
     }
 }
 
+// Positions for a layer using ellipsis notation when n > 3: node 1, node 2,
+// then node n, with the gap between node 2 and node n left open for a
+// vertical-dots placeholder (see drawDottedLayer) and spaced more tightly
+// than the n<=3 case so it reads as a compressed continuation rather than a
+// genuine gap. Returns only the positions of the nodes actually drawn (3 of
+// them when n>3), so the array is ready to hand to connectLayers/drawEdge.
+pair[] dottedLayerPositions(int n, real x, real spacing) {
+    if (n <= 3) return layerPositions(n, x, spacing, 0);
+    real tailGap = spacing*0.6;
+    pair[] pos = new pair[3];
+    pos[0] = (x, spacing);
+    pos[1] = (x, 0);
+    pos[2] = (x, -2*tailGap);
+    return pos;
+}
+
+// Draws the nodes for a dottedLayerPositions() layout, labeled
+// labelPrefix_1, labelPrefix_2, ..., labelPrefix_n (using the literal
+// index when n<=3, since then every node is shown).
+void drawDottedLayer(picture pic, pair[] pos, int n, real r, Theme theme, string labelPrefix) {
+    if (n <= 3) {
+        string[] labels = new string[n];
+        for (int i = 0; i < n; ++i) labels[i] = "$" + labelPrefix + "_{" + string(i+1) + "}$";
+        drawLayer(pic, pos, r, theme, labels);
+        return;
+    }
+    drawNode(pic, pos[0], r, theme, "$" + labelPrefix + "_1$");
+    drawNode(pic, pos[1], r, theme, "$" + labelPrefix + "_2$");
+    pair dotsPos = (pos[1].x, (pos[1].y + pos[2].y)/2);
+    label(pic, "$\vdots$", dotsPos, theme.text);
+    drawNode(pic, pos[2], r, theme, "$" + labelPrefix + "_n$");
+}
+
 // ------------------------------------------------------- CNN box/volume --
 
 // Draws a stack of `depth` overlapping rectangles (a common shorthand for a
