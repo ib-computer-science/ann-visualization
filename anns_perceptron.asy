@@ -28,10 +28,11 @@ void drawPerceptron(picture pic, Theme theme, int nInputs=5) {
     } else {
         rowPos = layerPositions(nRows, 0, spacing, 0);
     }
-    pair biasPos = (0, rowPos[0].y + spacing);
     pair sumPos = (4, 0);
     pair actPos = (6.5, 0);
     pair outputEnd = (9, 0);
+    // Directly above the sum node, so its connecting edge is vertical.
+    pair biasPos = (sumPos.x, rowPos[0].y + spacing);
 
     if (useDots) {
         drawNode(pic, rowPos[0], r, theme, "$x_1$");
