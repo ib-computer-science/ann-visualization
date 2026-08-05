@@ -57,6 +57,26 @@ void drawEdge(picture pic, pair fromPt, real rFrom, pair toPt, real rTo, Theme t
     }
 }
 
+// A dashed line from A to B with a gap around x=gapX (of half-width
+// gapHalfWidth) left clear for a label -- used for the "elided layers"
+// connectors in the MLP diagram, but works for any A/B, not just
+// horizontal ones, since the gap is carved out by interpolating along the
+// line rather than assuming a particular orientation.
+void drawGappedDashedLine(picture pic, pair A, pair B, real gapX, real gapHalfWidth,
+                           Theme theme, string labelText="", bool arrow=true) {
+    real t1 = (gapX - gapHalfWidth - A.x) / (B.x - A.x);
+    real t2 = (gapX + gapHalfWidth - A.x) / (B.x - A.x);
+    pair p1 = A + t1*(B - A);
+    pair p2 = A + t2*(B - A);
+    draw(pic, A--p1, theme.edge + dashed);
+    if (arrow) draw(pic, p2--B, theme.edge + dashed, Arrow(6));
+    else draw(pic, p2--B, theme.edge + dashed);
+    if (labelText != "") {
+        pair mid = A + 0.5*(B - A);
+        label(pic, labelText, mid, theme.text);
+    }
+}
+
 // ---------------------------------------------------------------- layers --
 
 // Positions for a vertical column of n nodes at horizontal offset x,

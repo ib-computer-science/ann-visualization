@@ -63,7 +63,33 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
 
     for (int c = 0; c < nCols; ++c) {
         if (colLayerIdx[c] < 0) {
-            label(pic, "$\cdots$", (c*xSpacing, 0), theme.text);
+            // Dashed lines through the ellipsis stand in for the elided
+            // layers' connections, one per node row (spanning the taller
+            // of the two neighboring hidden layers) so the chain reads as
+            // many parallel connections continuing rather than a single
+            // broken link. Each is split into two segments with a gap for
+            // its dots label so the dashes don't run through the dots.
+            int prevL = colLayerIdx[c-1];
+            int nextL = colLayerIdx[c+1];
+            int nRows = max(layerSizes[prevL], layerSizes[nextL]);
+            pair[] rows = layerPositions(nRows, 0, ySpacing, 0);
+
+            real midX = c*xSpacing;
+            real labelGap = 0.55;
+            real fromX = (c-1)*xSpacing + r;
+            real toX = (c+1)*xSpacing - r;
+
+            // Diagonal dashed lines to neighboring rows hint that the
+            // elided layers are still fully connected rather than a
+            // simple row-to-row pass-through; every line (horizontal or
+            // diagonal) gets its own gap and dots label so none of them
+            // read as a solid, unbroken connection.
+            for (int i = 0; i < nRows; ++i) {
+                pair rowStart = (fromX, rows[i].y);
+                if (i-1 >= 0) drawGappedDashedLine(pic, rowStart, (toX, rows[i-1].y), midX, labelGap, theme, "$\cdots$");
+                if (i+1 < nRows) drawGappedDashedLine(pic, rowStart, (toX, rows[i+1].y), midX, labelGap, theme, "$\cdots$");
+                drawGappedDashedLine(pic, rowStart, (toX, rows[i].y), midX, labelGap, theme, "$\cdots$");
+            }
             continue;
         }
         int l = colLayerIdx[c];
