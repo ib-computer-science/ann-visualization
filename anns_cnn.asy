@@ -102,29 +102,38 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     // The first convolution acts on real pixels, so it's
                     // worth spelling out concretely what "6 kernels of
                     // 5x5" means: two example kernels, shaded the same
-                    // way as the input pixels, plus a "..." (the same
-                    // ellipsis convention used for eliding nodes/layers
-                    // elsewhere) showing these are only 2 of the 6.
+                    // way as the input pixels, stacked vertically with a
+                    // "..." below them -- the same vertical-dots-below-two-
+                    // items convention used for eliding nodes elsewhere --
+                    // showing these are only 2 of the 6.
                     int kN = 5;
                     real kCell = 0.12;
                     real kWidth = kN*kCell;
-                    real ink = 0.85, mid = 0.5, blank = 0.05;
-                    real[][] kernelVert = new real[kN][kN];
-                    real[][] kernelHoriz = new real[kN][kN];
+                    real ink = 0.85, blank = 0.05;
+                    // A plus/cross (the classic Laplacian edge-detector
+                    // shape) and a checkerboard -- structured patterns
+                    // rather than a plain gradient.
+                    int kMid = (int)(kN/2);
+                    real[][] kernelCross = new real[kN][kN];
+                    real[][] kernelCheck = new real[kN][kN];
                     for (int r = 0; r < kN; ++r) {
                         for (int c = 0; c < kN; ++c) {
-                            kernelVert[r][c] = (c < 2) ? ink : (c == 2 ? mid : blank);
-                            kernelHoriz[r][c] = (r < 2) ? ink : (r == 2 ? mid : blank);
+                            kernelCross[r][c] = (r == kMid || c == kMid) ? ink : blank;
+                            kernelCheck[r][c] = ((r+c) % 2 == 0) ? ink : blank;
                         }
                     }
+                    real vspacing = kWidth + 0.3;
                     pair gapCenter = ((rightX[i-1] + leftX[i])/2, 0);
-                    pair centerA = gapCenter - (kWidth + 0.35, 0);
-                    pair centerB = gapCenter - (0, 0);
-                    drawGrid(pic, centerA - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
-                             new string[][], false, kernelVert);
-                    drawGrid(pic, centerB - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
-                             new string[][], false, kernelHoriz);
-                    label(pic, "$\cdots$", centerB + (kWidth/2 + 0.4, 0), theme.text);
+                    pair centerTop = gapCenter + (0, vspacing/2);
+                    pair centerBot = gapCenter - (0, vspacing/2);
+                    drawGrid(pic, centerTop - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
+                             new string[][], false, kernelCross);
+                    drawGrid(pic, centerBot - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
+                             new string[][], false, kernelCheck);
+                    // Nudged up slightly: \vdots renders with its visual
+                    // center below its LaTeX anchor point (see the same
+                    // fix in drawDottedLayer, anns_primitives.asy).
+                    label(pic, "$\vdots$", centerBot - (0, kWidth/2 + 0.32 - 0.1), theme.text);
                 } else {
                     drawConvHint(pic, basePos[i-1], blocks[i-1].size, basePos[i], b.size, theme);
                 }
