@@ -49,13 +49,16 @@ void drawConvolution(picture pic, Theme theme, int inputRows=6, int inputCols=6,
 
     // Arrows start at the input grid's right edge (at each window's own
     // height) rather than from inside the grid, so they don't cut across
-    // unrelated cells on their way to the output.
+    // unrelated cells on their way to the output. They arc rather than
+    // running straight, so the two (which would otherwise be collinear,
+    // since both windows sit in the same row) read as distinct paths.
     real edgeX = inputBase.x + inputCols*cellSize;
     pair edgeA = (edgeX, winA.y);
     pair edgeB = (edgeX, winB.y);
-    draw(pic, edgeA--cellA, theme.stroke + linewidth(1.2), Arrow(6));
-    label(pic, "$\sum(K \odot P)$", (edgeA + cellA)/2 + (0, 0.32), theme.text);
-    draw(pic, edgeB--cellB, theme.stroke + linewidth(0.6), Arrow(4));
+    pair ctrlA = (edgeA + cellA)/2 + (0, 0.5);
+    pair ctrlB = (edgeB + cellB)/2 + (0, 0.25);
+    draw(pic, edgeA..ctrlA..cellA, theme.stroke + linewidth(1.2), Arrow(6));
+    draw(pic, edgeB..ctrlB..cellB, theme.stroke + linewidth(0.6), Arrow(4));
 
     // An arrow above the input grid showing the kernel sliding from its
     // first position all the way to its second.
