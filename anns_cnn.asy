@@ -86,9 +86,6 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
         string cap = (l == fcSizes.length - 1) ? "Output" : ("FC " + string(l+1));
         label(pic, cap, (fcPos[l][0].x, fcCaptionY), theme.text);
     }
-
-    real titleY = max(flowY, fcHalfExtent) + 0.7;
-    drawTitle(pic, "Convolutional Neural Network", (fcStartX/2, titleY), theme);
 }
 
 void renderCNN(string themeName) {

@@ -40,9 +40,6 @@ void drawMLP(picture pic, Theme theme, int[] layerSizes, real xSpacing=2.5, real
         string cap = (l == 0) ? "Input" : (l == nLayers - 1) ? "Output" : ("Hidden " + string(l));
         label(pic, cap, (l*xSpacing, captionY), theme.text);
     }
-
-    real titleY = ((maxCount - 1)*ySpacing)/2 + 1.2;
-    drawTitle(pic, "Multi-Layer Network", ((nLayers - 1)*xSpacing/2, titleY), theme);
 }
 
 void renderMLP(string themeName, int[] layerSizes) {

@@ -31,8 +31,6 @@ void drawPerceptron(picture pic, Theme theme, int nInputs=3) {
     drawEdge(pic, sumPos, r, actPos, r, theme);
     drawEdge(pic, actPos, r, outputEnd, 0, theme);
     label(pic, "$y$", outputEnd + (0.4,0), theme.text);
-
-    drawTitle(pic, "Single Perceptron", (sumPos.x, biasPos.y + spacing), theme);
 }
 
 void renderPerceptron(string themeName, int nInputs=3) {
