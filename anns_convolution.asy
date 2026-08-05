@@ -53,8 +53,8 @@ void drawConvolution(picture pic, Theme theme, int inputRows=6, int inputCols=6,
     pair winBTop = gridRegionTopCenter(inputBase, cellSize, inputRows, 0, colB, k, k);
     pair cellATop = gridCellTopCenter(outputBase, cellSize, outputRows, 0, 0);
     pair cellBTop = gridCellTopCenter(outputBase, cellSize, outputRows, 0, outputCols-1);
-    pair ctrlA = (winATop + cellATop)/2 + (0, 0.35);
-    pair ctrlB = (winBTop + cellBTop)/2 + (0, 0.18);
+    pair ctrlA = (winATop + cellATop)/2 + (0, 0.5);
+    pair ctrlB = (winBTop + cellBTop)/2 + (0, 0.3);
     draw(pic, winATop..ctrlA..cellATop, theme.stroke + linewidth(1.2), Arrow(6));
     draw(pic, winBTop..ctrlB..cellBTop, theme.stroke + linewidth(0.6), Arrow(4));
 
