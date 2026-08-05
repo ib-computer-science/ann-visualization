@@ -109,17 +109,23 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     int kN = 5;
                     real kCell = 0.12;
                     real kWidth = kN*kCell;
-                    real ink = 0.85, blank = 0.05;
-                    // A plus/cross (the classic Laplacian edge-detector
-                    // shape) and a checkerboard -- structured patterns
-                    // rather than a plain gradient.
+                    real ink = 0.85, mid = 0.5, blank = 0.05;
+                    // Two patterns representative of what trained
+                    // first-layer digit-classifier filters actually look
+                    // like: a plus/cross (a Laplacian-style blob/stroke
+                    // detector) and a diagonal edge/gradient detector --
+                    // real filters are dominated by oriented edges and
+                    // stroke detectors, not high-frequency patterns like a
+                    // checkerboard (which a trained network essentially
+                    // never learns).
                     int kMid = (int)(kN/2);
                     real[][] kernelCross = new real[kN][kN];
-                    real[][] kernelCheck = new real[kN][kN];
+                    real[][] kernelDiag = new real[kN][kN];
                     for (int r = 0; r < kN; ++r) {
                         for (int c = 0; c < kN; ++c) {
                             kernelCross[r][c] = (r == kMid || c == kMid) ? ink : blank;
-                            kernelCheck[r][c] = ((r+c) % 2 == 0) ? ink : blank;
+                            int s = r + c;
+                            kernelDiag[r][c] = (s < kN-1) ? ink : (s == kN-1 ? mid : blank);
                         }
                     }
                     real vspacing = kWidth + 0.3;
@@ -129,7 +135,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                     drawGrid(pic, centerTop - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
                              new string[][], false, kernelCross);
                     drawGrid(pic, centerBot - (kWidth/2, kWidth/2), kCell, kN, kN, theme,
-                             new string[][], false, kernelCheck);
+                             new string[][], false, kernelDiag);
                     // Nudged up slightly: \vdots renders with its visual
                     // center below its LaTeX anchor point (see the same
                     // fix in drawDottedLayer, anns_primitives.asy).
