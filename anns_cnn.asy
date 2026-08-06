@@ -102,7 +102,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
             // more clearance above the arrow than a single-line one.
             real labelOffset = (find(b.opLabel, "shortstack") >= 0) ? 0.5 : 0.28;
             drawFlowArrow(pic, (rightX[i-1], flowY), (leftX[i], flowY), theme, b.opLabel, labelOffset);
-            if (find(b.opLabel, "conv") >= 0) {
+            if (find(b.opLabel, "convolution") >= 0) {
                 if (i == 1) {
                     // The first convolution acts on real pixels, so it's
                     // worth spelling out concretely what "6 kernels of
@@ -199,7 +199,7 @@ void renderCNN(string themeName) {
         cnnBlock(6,  1.5, "\shortstack{$n$ 24x24\\feature maps}",
                  "\shortstack{convolution with\\$n$ 5x5 kernels}", 0.3),
         cnnBlock(6,  1.0, "\shortstack{$n$ 12x12\\feature maps}",  "2x2 max pool", 0.3),
-        cnnBlock(12, 0.5, "Pool2 (4x4x12)",
+        cnnBlock(12, 0.5, "final feature maps",
                  "\shortstack{additional conv\\+ pool stages}")
     };
     int[] fcSizes = {8, 10};
