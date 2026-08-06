@@ -246,13 +246,13 @@ pair gridCellTopCenter(pair basePos, real cellSize, int rows, int row, int col) 
 // stack of feature maps / channels), back-to-front so the front face is on
 // top. basePos is the lower-left corner of the frontmost rectangle.
 void drawFeatureStack(picture pic, pair basePos, real w, real h, int depth, Theme theme,
-                       string label="", real skew=0.12) {
+                       string label="", real skew=0.12, real captionExtra=0) {
     for (int i = depth - 1; i >= 0; --i) {
         pair offset = (i*skew, i*skew);
         filldraw(pic, shift(basePos + offset)*box((0,0), (w,h)), theme.nodeFill, theme.stroke);
     }
     if (label != "") {
-        label(pic, label, basePos + (w/2, -0.4), theme.text);
+        label(pic, label, basePos + (w/2, -0.4 - captionExtra), theme.text);
     }
 }
 

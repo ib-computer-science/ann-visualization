@@ -7,18 +7,20 @@ import anns_theme;
 import anns_primitives;
 
 struct CNNBlock {
-    int depth;       // number of stacked feature maps drawn for this block
-    real size;        // width = height of each feature map square
-    string caption;    // label drawn under the block
-    string opLabel;    // label on the arrow feeding INTO this block (ignored for block 0)
+    int depth;          // number of stacked feature maps drawn for this block
+    real size;          // width = height of each feature map square
+    string caption;     // label drawn under the block
+    string opLabel;     // label on the arrow feeding INTO this block (ignored for block 0)
+    real captionExtra;  // additional downward shift for the caption (default 0)
 }
 
-CNNBlock cnnBlock(int depth, real size, string caption, string opLabel="") {
+CNNBlock cnnBlock(int depth, real size, string caption, string opLabel="", real captionExtra=0) {
     CNNBlock b = new CNNBlock;
     b.depth = depth;
     b.size = size;
     b.caption = caption;
     b.opLabel = opLabel;
+    b.captionExtra = captionExtra;
     return b;
 }
 
@@ -93,7 +95,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
             drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme, new string[][], false, pixelValues);
             label(pic, b.caption, basePos[i] + (b.size/2, -0.4), theme.text);
         } else {
-            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew);
+            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew, b.captionExtra);
         }
         if (i > 0) {
             // A wrapped (shortstack) label is two lines tall, so it needs
@@ -195,8 +197,8 @@ void renderCNN(string themeName) {
     CNNBlock[] blocks = {
         cnnBlock(1,  1.8, "Input (28x28x1)"),
         cnnBlock(6,  1.5, "\shortstack{$n$ 24x24\\feature maps}",
-                 "\shortstack{convolution with\\$n$ 5x5 kernels}"),
-        cnnBlock(6,  1.0, "Pool1 (12x12x6)",  "2x2 max pool"),
+                 "\shortstack{convolution with\\$n$ 5x5 kernels}", 0.3),
+        cnnBlock(6,  1.0, "\shortstack{$n$ 12x12\\feature maps}",  "2x2 max pool", 0.3),
         cnnBlock(12, 0.8, "Conv2 (8x8x12)",   "5x5 conv"),
         cnnBlock(12, 0.5, "Pool2 (4x4x12)",   "2x2 max pool")
     };
