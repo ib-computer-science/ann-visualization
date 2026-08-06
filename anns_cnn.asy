@@ -195,10 +195,10 @@ void renderCNN(string themeName) {
     picture pic;
 
     CNNBlock[] blocks = {
-        cnnBlock(1,  1.8, "Input (28x28x1)"),
-        cnnBlock(6,  1.5, "\shortstack{$n$ 24x24\\feature maps}",
-                 "\shortstack{convolution with\\$n$ 5x5 kernels}", 0.3),
-        cnnBlock(6,  1.0, "\shortstack{$n$ 12x12\\feature maps}",  "2x2 max pool", 0.3),
+        cnnBlock(1,  1.8, "$28\times28$ input"),
+        cnnBlock(6,  1.5, "\shortstack{$n$ $24\times24$\\feature maps}",
+                 "\shortstack{convolution with\\$n$ $5\times5$ kernels}", 0.3),
+        cnnBlock(6,  1.0, "\shortstack{$n$ $12\times12$\\feature maps}",  "$2\times2$ max pool", 0.3),
         cnnBlock(12, 0.5, "final feature maps",
                  "\shortstack{additional conv\\+ pool stages}")
     };
