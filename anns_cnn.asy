@@ -155,18 +155,18 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     }
 
     // --- flatten into fully connected layers ---
-    real ySpacing = 0.75;
+    real ySpacing = 1.0;
     real fcR = 0.3;
     real fcXStep = 2.0;
     real fcStartX = lastBlockX + xStep;
 
-    real fcMaxCount = 0;
-    for (int l = 0; l < fcSizes.length; ++l) fcMaxCount = max(fcMaxCount, (real) fcSizes[l]);
-    real fcHalfExtent = (fcMaxCount - 1)*ySpacing/2;
+    // Bottom node in a dotted layer sits at -2*(ySpacing*0.6) = -1.2*ySpacing;
+    // add fcR so the caption clears the node's lower edge.
+    real fcHalfExtent = 1.2*ySpacing + fcR;
 
     pair[][] fcPos = new pair[fcSizes.length][];
     for (int l = 0; l < fcSizes.length; ++l) {
-        fcPos[l] = layerPositions(fcSizes[l], fcStartX + l*fcXStep, ySpacing, 0);
+        fcPos[l] = dottedLayerPositions(fcSizes[l], fcStartX + l*fcXStep, ySpacing);
     }
 
     drawFlowArrow(pic, (rightX[blocks.length-1], 0), (fcStartX - fcR - 0.3, 0), theme, "flatten");
@@ -174,13 +174,15 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     for (int l = 0; l < fcSizes.length - 1; ++l) {
         connectLayers(pic, fcPos[l], fcR, fcPos[l+1], fcR, theme);
     }
+    // countSymbols for the two layers: use distinct letters so the diagram
+    // doesn't imply the hidden and output layer sizes are equal.
+    string[] countSymbols = {"p", "m"};
     for (int l = 0; l < fcSizes.length; ++l) {
-        string[] labels = new string[fcSizes[l]];
-        for (int i = 0; i < fcSizes[l]; ++i) labels[i] = "";
         if (l == fcSizes.length - 1) {
-            for (int i = 0; i < fcSizes[l]; ++i) labels[i] = "$y_{" + string(i+1) + "}$";
+            drawDottedLayer(pic, fcPos[l], fcSizes[l], fcR, theme, "y", countSymbols[l]);
+        } else {
+            drawDottedLayer(pic, fcPos[l], fcSizes[l], fcR, theme, "", countSymbols[l]);
         }
-        drawLayer(pic, fcPos[l], fcR, theme, labels);
     }
 
     real fcCaptionY = -fcHalfExtent - 0.6;
@@ -188,9 +190,13 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
         string cap = (l == fcSizes.length - 1) ? "Output" : ("FC " + string(l+1));
         label(pic, cap, (fcPos[l][0].x, fcCaptionY), theme.text);
     }
+
+    real fcMidX = (fcPos[0][0].x + fcPos[fcSizes.length-1][0].x)/2;
+    real fcTopY = ySpacing + fcR + 0.4;
+    label(pic, "MLP", (fcMidX, fcTopY), theme.text);
 }
 
-void renderCNN(string themeName) {
+void renderCNN(string themeName, int[] fcSizes = {8, 10}) {
     Theme theme = getTheme(themeName);
     picture pic;
 
@@ -202,7 +208,6 @@ void renderCNN(string themeName) {
         cnnBlock(12, 0.5, "final feature maps",
                  "\shortstack{additional conv\\+ pool stages}")
     };
-    int[] fcSizes = {8, 10};
 
     drawCNN(pic, theme, blocks, fcSizes);
     renderTheme(pic, theme);
