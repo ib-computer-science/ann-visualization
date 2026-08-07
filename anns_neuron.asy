@@ -65,7 +65,7 @@ void drawNeuron(picture pic, Theme theme) {
     label(pic, "\shortstack{cell body\\(activation)}", (somaCenter.x, captionY), N, theme.text);
     label(pic, "\shortstack{axon\\(carries signal)}",
           (axonStart.x + 0.6*(axonEnd.x - axonStart.x), captionY), N, theme.text);
-    label(pic, "\shortstack{axon terminals\\(output)}", (10.7, captionY), N, theme.text);
+    label(pic, "\shortstack{terminals\\(output)}", (10.7, captionY), N, theme.text);
 }
 
 void renderNeuron(string themeName) {
