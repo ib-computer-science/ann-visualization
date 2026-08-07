@@ -39,7 +39,7 @@ void drawNeuron(picture pic, Theme theme) {
     // sheath drawn as thick segments separated by gaps (nodes of
     // Ranvier) ---
     pair axonStart = somaCenter + (somaRx, 0);
-    pair axonEnd = (11.2, 0);
+    pair axonEnd = (9.6, 0);
     draw(pic, axonStart--axonEnd, p);
     real segLen = 0.5, gapLen = 0.3;
     real sx = axonStart.x + 0.25;
@@ -50,7 +50,7 @@ void drawNeuron(picture pic, Theme theme) {
 
     // --- axon terminals: branching output endings, each passing the
     // signal on (a synaptic terminal / bouton) ---
-    pair[] termTips = {(12.2, 0.8), (12.4, 0), (12.2, -0.8)};
+    pair[] termTips = {(10.6, 0.8), (10.8, 0), (10.6, -0.8)};
     for (int i = 0; i < termTips.length; ++i) {
         draw(pic, axonEnd..termTips[i], p, Arrow(5));
         filldraw(pic, circle(termTips[i], 0.09), p, p);
@@ -64,8 +64,8 @@ void drawNeuron(picture pic, Theme theme) {
     label(pic, "\shortstack{dendrites\\(inputs)}", (0.9, captionY), N, theme.text);
     label(pic, "\shortstack{cell body\\(activation)}", (somaCenter.x, captionY), N, theme.text);
     label(pic, "\shortstack{axon\\(carries signal)}",
-          (axonStart.x + 0.65*(axonEnd.x - axonStart.x), captionY), N, theme.text);
-    label(pic, "\shortstack{axon terminals\\(output)}", (12.3, captionY), N, theme.text);
+          (axonStart.x + 0.6*(axonEnd.x - axonStart.x), captionY), N, theme.text);
+    label(pic, "\shortstack{axon terminals\\(output)}", (10.7, captionY), N, theme.text);
 }
 
 void renderNeuron(string themeName) {
