@@ -156,7 +156,12 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                             kernelDiag[r][c] = (s < kN-1) ? ink : (s == kN-1 ? mid : blank);
                         }
                     }
-                    real vspacing = kWidth + 0.3;
+                    // Tight enough that the bottom kernel's bottom edge
+                    // (vspacing + kWidth/2 below center) stays clear of
+                    // the two-line caption's actual top (measured ~1.15
+                    // below the shared captionY baseline), not just its
+                    // nominal anchor point.
+                    real vspacing = kWidth + 0.05;
                     pair gapCenter = ((rightX[i-1] + leftX[i])/2, 0);
                     pair centerTop = gapCenter + (0, vspacing);
                     pair centerBot = gapCenter - (0, vspacing);
