@@ -28,6 +28,9 @@ void drawNeuron(picture pic, Theme theme) {
     pair[] tips = {(0.0, 1.7), (-0.3, 0.6), (-0.3, -0.6), (0.0, -1.7)};
     for (int i = 0; i < entries.length; ++i) {
         draw(pic, tips[i]..entries[i], p, Arrow(5));
+        // Incoming synaptic contacts (dendritic spines), mirroring the
+        // outgoing terminal boutons on the axon side.
+        filldraw(pic, circle(tips[i], 0.09), p, p);
     }
 
     // --- cell body (soma), integrating the incoming signals, with a
@@ -60,8 +63,11 @@ void drawNeuron(picture pic, Theme theme) {
     // motivates, sharing one baseline the way the other diagrams do.
     // The axon caption sits two-thirds of the way along it (not
     // centered) so it doesn't crowd the cell-body caption next to it.
+    // Centered on the dendrite bundle's actual horizontal midpoint (tips
+    // at x=-0.3 to soma entries at x~4.4), not just its tips, so the
+    // caption reads as labeling the whole converging bundle.
     real captionY = -2.8;
-    label(pic, "\shortstack{dendrites\\(inputs)}", (0.9, captionY), N, theme.text);
+    label(pic, "\shortstack{dendrites\\(inputs)}", (2.0, captionY), N, theme.text);
     label(pic, "\shortstack{cell body\\(activation)}", (somaCenter.x, captionY), N, theme.text);
     label(pic, "\shortstack{axon\\(carries signal)}",
           (axonStart.x + 0.6*(axonEnd.x - axonStart.x), captionY), N, theme.text);
