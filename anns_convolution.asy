@@ -20,17 +20,17 @@ void drawConvolution(picture pic, Theme theme, int inputRows=6, int inputCols=6,
     // grid isn't just an abstract empty matrix.
     string[][] kernelLabels = {{"1","0","-1"},{"2","0","-2"},{"1","0","-1"}};
     drawGrid(pic, kernelBase, cellSize, k, k, theme, kernelLabels);
-    label(pic, string(k) + "x" + string(k) + " kernel", kernelBase + (k*cellSize/2, -0.4), theme.text);
+    label(pic, "$" + string(k) + "\times" + string(k) + "$ kernel", kernelBase + (k*cellSize/2, -0.4), theme.text);
 
     // Input/output are drawn as faint dotted grids -- with only black and
     // white available, a solid-lined highlight is what makes the active
     // kernel window and output cell read as "different" from the rest.
     drawGrid(pic, inputBase, cellSize, inputRows, inputCols, theme, new string[][], true);
-    label(pic, string(inputRows) + "x" + string(inputCols) + " input",
+    label(pic, "$" + string(inputRows) + "\times" + string(inputCols) + "$ input",
           inputBase + (inputCols*cellSize/2, -0.4), theme.text);
 
     drawGrid(pic, outputBase, cellSize, outputRows, outputCols, theme, new string[][], true);
-    label(pic, string(outputRows) + "x" + string(outputCols) + " output",
+    label(pic, "$" + string(outputRows) + "\times" + string(outputCols) + "$ output",
           outputBase + (outputCols*cellSize/2, -0.4), theme.text);
 
     // The kernel window shown at two positions -- thick solid on the left,
