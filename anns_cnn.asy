@@ -7,20 +7,18 @@ import anns_theme;
 import anns_primitives;
 
 struct CNNBlock {
-    int depth;          // number of stacked feature maps drawn for this block
-    real size;          // width = height of each feature map square
-    string caption;     // label drawn under the block
-    string opLabel;     // label on the arrow feeding INTO this block (ignored for block 0)
-    real captionExtra;  // additional downward shift for the caption (default 0)
+    int depth;       // number of stacked feature maps drawn for this block
+    real size;       // width = height of each feature map square
+    string caption;  // label drawn under the block
+    string opLabel;  // label on the arrow feeding INTO this block (ignored for block 0)
 }
 
-CNNBlock cnnBlock(int depth, real size, string caption, string opLabel="", real captionExtra=0) {
+CNNBlock cnnBlock(int depth, real size, string caption, string opLabel="") {
     CNNBlock b = new CNNBlock;
     b.depth = depth;
     b.size = size;
     b.caption = caption;
     b.opLabel = opLabel;
-    b.captionExtra = captionExtra;
     return b;
 }
 
@@ -68,6 +66,20 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     real lastBlockX = x;
     real flowY = blockHalfExtent + 0.6;
 
+    // FC-column geometry is needed up front so every caption in the
+    // diagram -- block captions and FC/Output alike -- can share one
+    // baseline (see captionY below), rather than each block picking its
+    // own offset from its own bottom edge.
+    real ySpacing = 1.0;
+    real fcR = 0.3;
+    real fcXStep = 2.0;
+    // dottedLayerPositions centers a column's top/bottom span on
+    // ycenter=0, so both ends sit at +-1.1*ySpacing; add fcR to clear the
+    // nodes' edges, and this is also the deepest any element in the
+    // diagram reaches, so it sets the shared caption baseline.
+    real fcHalfExtent = 1.1*ySpacing + fcR;
+    real captionY = -fcHalfExtent - 0.6;
+
     pair[] basePos = new pair[blocks.length];
     for (int i = 0; i < blocks.length; ++i) basePos[i] = (leftX[i], -blocks[i].size/2);
 
@@ -93,10 +105,12 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
                 {blank,blank,ink,  blank,blank,blank,blank}
             };
             drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme, new string[][], false, pixelValues);
-            label(pic, b.caption, basePos[i] + (b.size/2, -0.4), theme.text);
         } else {
-            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, b.caption, skew, b.captionExtra);
+            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, skew);
         }
+        // All block captions share one baseline (captionY), regardless of
+        // block size or single- vs two-line text, via N (bottom) anchoring.
+        label(pic, b.caption, (basePos[i].x + b.size/2, captionY), N, theme.text);
         if (i > 0) {
             // A wrapped (shortstack) label is two lines tall, so it needs
             // more clearance above the arrow than a single-line one.
@@ -155,22 +169,15 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     }
 
     // --- flatten into fully connected layers ---
-    real ySpacing = 1.0;
-    real fcR = 0.3;
-    real fcXStep = 2.0;
     real fcStartX = lastBlockX + xStep;
-
-    // dottedLayerPositions now centers the column's top/bottom span on
-    // ycenter=0, so both ends sit at +-1.1*ySpacing; add fcR so the
-    // caption/label clear the nodes' edges.
-    real fcHalfExtent = 1.1*ySpacing + fcR;
 
     pair[][] fcPos = new pair[fcSizes.length][];
     for (int l = 0; l < fcSizes.length; ++l) {
         fcPos[l] = dottedLayerPositions(fcSizes[l], fcStartX + l*fcXStep, ySpacing);
     }
 
-    drawFlowArrow(pic, (rightX[blocks.length-1], 0), (fcStartX - fcR - 0.3, 0), theme, "flatten");
+    // Same flowY as the other transition arrows, so all of them line up.
+    drawFlowArrow(pic, (rightX[blocks.length-1], flowY), (fcStartX - fcR - 0.3, flowY), theme, "flatten");
 
     for (int l = 0; l < fcSizes.length - 1; ++l) {
         connectLayers(pic, fcPos[l], fcR, fcPos[l+1], fcR, theme);
@@ -186,10 +193,9 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
         }
     }
 
-    real fcCaptionY = -fcHalfExtent - 0.6;
     for (int l = 0; l < fcSizes.length; ++l) {
         string cap = (l == fcSizes.length - 1) ? "Output" : ("FC " + string(l+1));
-        label(pic, cap, (fcPos[l][0].x, fcCaptionY), theme.text);
+        label(pic, cap, (fcPos[l][0].x, captionY), N, theme.text);
     }
 
     real fcMidX = (fcPos[0][0].x + fcPos[fcSizes.length-1][0].x)/2;
@@ -204,8 +210,8 @@ void renderCNN(string themeName, int[] fcSizes = {8, 10}) {
     CNNBlock[] blocks = {
         cnnBlock(1,  1.8, "$28\times28$ input"),
         cnnBlock(6,  1.5, "\shortstack{$n$ $24\times24$\\feature maps}",
-                 "\shortstack{convolution with\\$n$ $5\times5$ kernels}", 0.3),
-        cnnBlock(6,  1.0, "\shortstack{$n$ $12\times12$\\feature maps}",  "$2\times2$ max pool", 0.3),
+                 "\shortstack{convolution with\\$n$ $5\times5$ kernels}"),
+        cnnBlock(6,  1.0, "\shortstack{$n$ $12\times12$\\feature maps}",  "$2\times2$ max pool"),
         cnnBlock(12, 0.5, "final feature maps",
                  "\shortstack{additional conv\\+ pool stages}")
     };

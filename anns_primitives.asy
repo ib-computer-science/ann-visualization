@@ -252,15 +252,15 @@ pair gridCellTopCenter(pair basePos, real cellSize, int rows, int row, int col) 
 
 // Draws a stack of `depth` overlapping rectangles (a common shorthand for a
 // stack of feature maps / channels), back-to-front so the front face is on
-// top. basePos is the lower-left corner of the frontmost rectangle.
+// top. basePos is the lower-left corner of the frontmost rectangle. Caption
+// drawing is the caller's responsibility (see anns_cnn.asy), since aligning
+// captions across blocks of different sizes needs a shared baseline that
+// this function, drawing one block at a time, can't know about.
 void drawFeatureStack(picture pic, pair basePos, real w, real h, int depth, Theme theme,
-                       string label="", real skew=0.12, real captionExtra=0) {
+                       real skew=0.12) {
     for (int i = depth - 1; i >= 0; --i) {
         pair offset = (i*skew, i*skew);
         filldraw(pic, shift(basePos + offset)*box((0,0), (w,h)), theme.nodeFill, theme.stroke);
-    }
-    if (label != "") {
-        label(pic, label, basePos + (w/2, -0.4 - captionExtra), theme.text);
     }
 }
 
