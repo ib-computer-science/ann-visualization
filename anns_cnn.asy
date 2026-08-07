@@ -83,9 +83,14 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     // dottedLayerPositions centers a column's top/bottom span on
     // ycenter=0, so both ends sit at +-1.1*ySpacing; add fcR to clear the
     // nodes' edges, and this is also the deepest any element in the
-    // diagram reaches, so it sets the shared caption baseline.
+    // diagram reaches (deeper than any block), so it sets the shared
+    // caption baseline. The margin below it (1.0, not just a small gap)
+    // has to clear not just fcHalfExtent itself but the actual rendered
+    // top of a two-line \shortstack caption, which extends ~0.85 above
+    // its N-anchor -- measured directly, not assumed, since guessing
+    // this wrong is exactly what caused the previous overlap.
     real fcHalfExtent = 1.1*ySpacing + fcR;
-    real captionY = -fcHalfExtent - 0.6;
+    real captionY = -fcHalfExtent - 1.0;
 
     pair[] basePos = new pair[blocks.length];
     for (int i = 0; i < blocks.length; ++i) basePos[i] = (leftX[i], -blocks[i].size/2);
