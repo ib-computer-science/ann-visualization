@@ -61,11 +61,11 @@ void drawNeuron(picture pic, Theme theme) {
     // The axon caption sits two-thirds of the way along it (not
     // centered) so it doesn't crowd the cell-body caption next to it.
     real captionY = -2.8;
-    label(pic, "\shortstack{dendrites\\(inputs $x_i$)}", (0.9, captionY), N, theme.text);
-    label(pic, "\shortstack{cell body\\(sum $+$ activation)}", (somaCenter.x, captionY), N, theme.text);
+    label(pic, "\shortstack{dendrites\\(inputs)}", (0.9, captionY), N, theme.text);
+    label(pic, "\shortstack{cell body\\(activation)}", (somaCenter.x, captionY), N, theme.text);
     label(pic, "\shortstack{axon\\(carries signal)}",
           (axonStart.x + 0.65*(axonEnd.x - axonStart.x), captionY), N, theme.text);
-    label(pic, "\shortstack{axon terminals\\(output $y$)}", (12.3, captionY), N, theme.text);
+    label(pic, "\shortstack{axon terminals\\(output)}", (12.3, captionY), N, theme.text);
 }
 
 void renderNeuron(string themeName) {
