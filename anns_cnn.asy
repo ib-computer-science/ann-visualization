@@ -193,10 +193,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
         }
     }
 
-    for (int l = 0; l < fcSizes.length; ++l) {
-        string cap = (l == fcSizes.length - 1) ? "Output" : ("FC " + string(l+1));
-        label(pic, cap, (fcPos[l][0].x, captionY), N, theme.text);
-    }
+    label(pic, "output", (fcPos[fcSizes.length-1][0].x, captionY), N, theme.text);
 
     // Same height as the single-line transition-arrow labels (e.g.
     // "flatten"), so the MLP title reads as part of that same top row.
