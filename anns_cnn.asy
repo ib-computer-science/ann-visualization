@@ -46,18 +46,25 @@ void drawConvHint(picture pic, pair inBase, real inSize, pair outBase, real outS
 }
 
 void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
-             real xStep=4.2, real skew=0.10) {
+             real xStep=4.2, real skew=0.10, int maxVisualDepth=6) {
     // --- convolutional / pooling stacks ---
     // Operation arrows are routed along a common horizontal line above all
     // the blocks (flowY), independent of each block's own size, so their
     // captions never collide with the per-block captions drawn underneath.
+    // The "3D stack" skew offset accumulates with depth, so an uncapped
+    // block with many more layers than its neighbors (e.g. 12 vs 6) would
+    // silhouette noticeably higher than them even though its own front
+    // square is centered like everyone else's -- so depth is capped at
+    // maxVisualDepth for every geometry/drawing purpose here; the true
+    // depth is only ever used in captions, never in layout.
     real[] leftX = new real[blocks.length];
     real[] rightX = new real[blocks.length];
     real blockHalfExtent = 0;
     real x = 0;
     for (int i = 0; i < blocks.length; ++i) {
         CNNBlock b = blocks[i];
-        real ext = (b.depth - 1)*skew;
+        int visualDepth = min(b.depth, maxVisualDepth);
+        real ext = (visualDepth - 1)*skew;
         leftX[i] = x;
         rightX[i] = x + b.size + ext;
         blockHalfExtent = max(blockHalfExtent, b.size/2 + ext);
@@ -106,7 +113,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
             };
             drawGrid(pic, basePos[i], pixCell, pixN, pixN, theme, new string[][], false, pixelValues);
         } else {
-            drawFeatureStack(pic, basePos[i], b.size, b.size, b.depth, theme, skew);
+            drawFeatureStack(pic, basePos[i], b.size, b.size, min(b.depth, maxVisualDepth), theme, skew);
         }
         // All block captions share one baseline (captionY), regardless of
         // block size or single- vs two-line text, via N (bottom) anchoring.
