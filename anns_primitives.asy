@@ -115,13 +115,21 @@ void connectLayers(picture pic, pair[] fromPos, real rFrom, pair[] toPos, real r
 // than the n<=3 case so it reads as a compressed continuation rather than a
 // genuine gap. Returns only the positions of the nodes actually drawn (3 of
 // them when n>3), so the array is ready to hand to connectLayers/drawEdge.
-pair[] dottedLayerPositions(int n, real x, real spacing) {
-    if (n <= 3) return layerPositions(n, x, spacing, 0);
+// Since the tail is compressed, node 1 (top) and node n (bottom) aren't
+// equidistant from y=0 by construction -- ycenter is where the column's
+// overall top-to-bottom span is actually centered, so this column's
+// vertical center lines up with a plain layerPositions() column (or
+// another dotted one) placed at the same ycenter.
+pair[] dottedLayerPositions(int n, real x, real spacing, real ycenter=0) {
+    if (n <= 3) return layerPositions(n, x, spacing, ycenter);
     real tailGap = spacing*0.6;
+    real topOffset = spacing;
+    real botOffset = -2*tailGap;
+    real correction = ycenter - (topOffset + botOffset)/2;
     pair[] pos = new pair[3];
-    pos[0] = (x, spacing);
-    pos[1] = (x, 0);
-    pos[2] = (x, -2*tailGap);
+    pos[0] = (x, topOffset + correction);
+    pos[1] = (x, correction);
+    pos[2] = (x, botOffset + correction);
     return pos;
 }
 

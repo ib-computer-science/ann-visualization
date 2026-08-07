@@ -160,9 +160,10 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     real fcXStep = 2.0;
     real fcStartX = lastBlockX + xStep;
 
-    // Bottom node in a dotted layer sits at -2*(ySpacing*0.6) = -1.2*ySpacing;
-    // add fcR so the caption clears the node's lower edge.
-    real fcHalfExtent = 1.2*ySpacing + fcR;
+    // dottedLayerPositions now centers the column's top/bottom span on
+    // ycenter=0, so both ends sit at +-1.1*ySpacing; add fcR so the
+    // caption/label clear the nodes' edges.
+    real fcHalfExtent = 1.1*ySpacing + fcR;
 
     pair[][] fcPos = new pair[fcSizes.length][];
     for (int l = 0; l < fcSizes.length; ++l) {
@@ -192,7 +193,7 @@ void drawCNN(picture pic, Theme theme, CNNBlock[] blocks, int[] fcSizes,
     }
 
     real fcMidX = (fcPos[0][0].x + fcPos[fcSizes.length-1][0].x)/2;
-    real fcTopY = ySpacing + fcR + 0.4;
+    real fcTopY = fcHalfExtent + 0.4;
     label(pic, "MLP", (fcMidX, fcTopY), theme.text);
 }
 
